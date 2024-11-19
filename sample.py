@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from pymongo import MongoClient
 from bson import ObjectId  # Import ObjectId to work with MongoDB ObjectIds
 import base64
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -18,7 +19,8 @@ app.config['MAX_CONTENT_LENGTH'] = 15 * 1024 * 1024  # Set max file size to 15 M
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Render 'index.html' from the root folder
+    return render_template(os.path.join(os.getcwd(), 'index.html'))
 
 @app.route('/verify_email', methods=['POST'])
 def verify_email():
@@ -50,7 +52,8 @@ def gallery():
     for photo in photos:
         photo['image'] = base64.b64encode(photo['image']).decode('utf-8')
     
-    return render_template('gallery.html', user_name=user_name, email=email, photos=photos)
+    # Render 'gallery.html' from the root folder
+    return render_template(os.path.join(os.getcwd(), 'gallery.html'), user_name=user_name, email=email, photos=photos)
 
 @app.route('/vote', methods=['POST'])
 def vote():
