@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from pymongo import MongoClient
 from bson import ObjectId  # Import ObjectId to work with MongoDB ObjectIds
 import base64
-import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -14,12 +13,9 @@ photos_collection = db['photos']
 votes_collection = db['votes']
 emails_collection = db['emails']
 
-# Set the path for the root directory where HTML files are stored
-app.template_folder = os.path.abspath(os.path.dirname(__file__))  # This sets the root directory as the template folder
-
 @app.route('/')
 def index():
-    return render_template('index.html')  # Renders the index.html file from the root directory
+    return render_template('index.html')
 
 @app.route('/verify_email', methods=['POST'])
 def verify_email():
@@ -57,7 +53,7 @@ def gallery():
     for photo in photos:
         photo['image'] = base64.b64encode(photo['image']).decode('utf-8')
     
-    return render_template('gallery.html', user_name=user_name, email=email, photos=photos)  # Renders gallery.html file from the root directory
+    return render_template('gallery.html', user_name=user_name, email=email, photos=photos)
 
 @app.route('/vote', methods=['POST'])
 def vote():
