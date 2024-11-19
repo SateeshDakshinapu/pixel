@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Photo Gallery</title>
+    <style>
+      /* General styling */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-image: url("../static/inside.jpeg.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* Header Styling */
+      header {
+        width: 100%;
+        padding: 10px 20px;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+      }
+
+      .logo-container {
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo {
+        width: 90px;
+        height: auto;
+      }
+
+      .header-text-container {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+      }
+
+      .header-text {
+        color: black;
+        text-align: center;
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+
+      h2 {
+        font-size: 1.2em;
+      }
+
+      /* Content Styling */
+      .content {
+        flex: 1;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .photo-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .photo-item {
+        position: relative;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .photo-item img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .photo-item.expanded img {
+        width: auto;
+        height: auto;
+        max-width: 90vw;
+        max-height: 70vh;
+      }
+
+      .photo-item p {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .vote-button {
+        display: none;
+        margin-top: 10px;
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .vote-button:hover {
+        background-color: #0056b3;
+      }
+
+      .photo-item.expanded .vote-button {
+        display: inline-block;
+      }
+
+        /* Footer styling */
+      footer {
+        width: 100%;
+        padding: 20px;
+        background-color: #f4f4f4;
+        font-size: 14px;
+        color: #555;
+        text-align: center;
+        font-weight: bold;
+        position: relative;
+      }
+
+      /* Responsive styling */
+      @media (max-width: 768px) {
+        header {
+          padding: 8px 10px;
+        }
+
+        .logo {
+          width: 70px;
+        }
+
+        h1 {
+          font-size: 1.2em;
+        }
+
+        h2 {
+          font-size: 1em;
+        }
+
+        .photo-gallery {
+          gap: 10px;
+        }
+
+        .photo-item img {
+          width: 120px;
+          height: 120px;
+        }
+      }
+
+      /* Adjustments for mobile view */
+      @media (max-width: 480px) {
+        .logo {
+          width: 80px;
+        }
+
+        h1 {
+          font-size: large;
+        }
+
+        h2 {
+          font-size: medium;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo-container">
+        <img src="../static/logo_transparent.png" alt="Logo" class="logo" />
+      </div>
+      <div class="header-text-container">
+        <div class="header-text">
+          <h1>Welcome {{ user_name }}.</h1>
+          <h2>Vote for Your Favorite Photo</h2>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="photo-gallery">
+        {% for photo in photos %}
+        <div
+          class="photo-item"
+          id="photo-{{ photo._id }}"
+          onclick="expandImage('{{ photo._id }}')"
+        >
+          <p>Photo Number: {{ photo.image_number }}</p>
+          <img
+            src="data:image/jpeg;base64,{{ photo.image }}"
+            alt="Photo {{ photo.image_number }}"
+          />
+          <form action="{{ url_for('vote') }}" method="POST" class="vote-form">
+            <input type="hidden" name="image_id" value="{{ photo._id }}" />
+            <input type="hidden" name="email" value="{{ user_email }}" />
+            <button type="submit" class="vote-button">
+              Vote for this Picture
+            </button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>
+        Developed by <strong>Mahesh</strong> and <strong>Sateesh</strong> IV DS
+      </p>
+    </footer>
+
+    <script>
+      // Function to toggle expansion of photo
+      function expandImage(photoId) {
+        const photoItem = document.getElementById(`photo-${photoId}`);
+        photoItem.classList.toggle("expanded");
+      }
+    </script>
+  </body>
+</html>
