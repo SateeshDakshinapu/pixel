@@ -17,10 +17,12 @@ emails_collection = db['emails']
 # Configure Flask to accept larger file uploads
 app.config['MAX_CONTENT_LENGTH'] = 15 * 1024 * 1024  # Set max file size to 15 MB
 
+# Load HTML templates from the root folder
 @app.route('/')
 def index():
-    # Render 'index.html' from the root folder
-    return render_template(os.path.join(os.getcwd(), 'index.html'))
+    with open('index.html', 'r') as f:
+        content = f.read()
+    return content
 
 @app.route('/verify_email', methods=['POST'])
 def verify_email():
@@ -52,8 +54,28 @@ def gallery():
     for photo in photos:
         photo['image'] = base64.b64encode(photo['image']).decode('utf-8')
     
-    # Render 'gallery.html' from the root folder
-    return render_template(os.path.join(os.getcwd(), 'gallery.html'), user_name=user_name, email=email, photos=photos)
+    # Load gallery.html from the root folder
+    with open('gallery.html', 'r') as f:
+        content = f.read()
+    
+    # Replace placeholder for photos in the gallery.html file
+    photos_html = ""
+    for photo in photos:
+        photos_html += f"""
+            <div class="photo-item">
+                <img src="data:image/jpeg;base64,{photo['image']}" alt="Photo">
+                <form action="{url_for('vote')}" method="POST">
+                    <input type="hidden" name="image_id" value="{photo['_id']}">
+                    <button type="submit">Vote</button>
+                </form>
+            </div>
+        """
+    
+    content = content.replace("{{ photos_placeholder }}", photos_html)
+    content = content.replace("{{ user_name }}", user_name)
+    content = content.replace("{{ email }}", email)
+
+    return content
 
 @app.route('/vote', methods=['POST'])
 def vote():
