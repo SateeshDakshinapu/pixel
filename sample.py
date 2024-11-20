@@ -8,7 +8,7 @@ app.secret_key = 'your_secret_key'
 
 # MongoDB connection
 client = MongoClient("mongodb+srv://tiger:tigersateesh@cluster0.0ggj59e.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-db = client['competition_db65']
+db = client['competition_db888']
 photos_collection = db['photos']
 votes_collection = db['votes']
 emails_collection = db['emails']
